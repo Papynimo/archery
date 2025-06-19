@@ -70,3 +70,4 @@ if __name__ == "__main__":
     print(f"Charge dynamique cible : {result['D_dynamic_lb']:.1f} lb")
     print(f"Spine statique recommandée : {result['spine_stat_ata']:.0f}")
     print("Détails des offsets :", result['offsets'])
+
