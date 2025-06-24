@@ -6,10 +6,10 @@ st.title("🎯 Calculateur de spine pour le tir à l'arc")
 
 st.markdown("Remplissez les paramètres ci-dessous pour obtenir une recommandation de spine statique selon la norme ATA.")
 
-# Champs avec valeurs par défaut
-draw_length = st.number_input("Allonge (en pouces)", min_value=0.5, value=28.0, format="%f")
-draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=1.0, value=40.0, format="%f")
-tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0.0, value=11.0, format="%f")
+# Champs avec ajustements de granularité
+draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, max_value=35.0, value=28.0, step=0.25, format="%.2f")
+draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0, max_value=100, value=40, step=1, format="%d")
+tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0, max_value=300, value=11, step=1, format="%d")
 string_type = st.selectbox("Type de corde", ["modern", "dacron", "non spécifié"], index=2)
 silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
 window_cut = st.number_input("Décalage de la fenêtre (center-cut) en mm", value=0.0, format="%f")
@@ -20,7 +20,7 @@ silencer_val = silencer_type if silencer_type in ["heavy", "light"] else None
 
 # Affichage des valeurs saisies
 st.write("### Paramètres saisis :")
-st.write(f"- Allonge : {draw_length} pouces")
+st.write(f"- Allonge : {draw_length:.2f} pouces")
 st.write(f"- Puissance : {draw_weight} livres")
 st.write(f"- Poids de pointe : {tip_weight} g")
 st.write(f"- Type de corde : {string_val or 'non spécifié'}")
@@ -50,3 +50,5 @@ if draw_length > 0 and draw_weight > 0:
         st.write(f"- Découpe latérale : {offsets['centercut_offset_lb']} lb")
 else:
     st.warning("Veuillez saisir une allonge et une puissance supérieures à 0 pour lancer le calcul.")
+
+
