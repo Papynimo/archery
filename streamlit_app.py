@@ -1,4 +1,4 @@
-import streamlit as st
+mport streamlit as st
 from spine_calculator import spine_dynamique_requise
 
 st.set_page_config(page_title="Calculateur de spine", layout="centered")
@@ -12,7 +12,7 @@ draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0,
 tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0, max_value=300, value=11, step=1, format="%d")
 string_type = st.selectbox("Type de corde", ["modern", "dacron", "non spécifié"], index=2)
 silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
-window_cut = st.number_input("Décalage de la fenêtre (center-cut) en mm", value=0.0, format="%f")
+window_cut = st.number_input("Décalage de la fenêtre (center-cut) en mm", min_value=-10, max_value=20, value=0, step=1, format="%d")
 
 # Nettoyage des entrées texte
 string_val = string_type if string_type in ["modern", "dacron"] else None
