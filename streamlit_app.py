@@ -1,36 +1,52 @@
 import streamlit as st
 from spine_calculator import spine_dynamique_requise
 
-st.set_page_config(
-    page_title="Calculateur de Spine Dynamique",
-    layout="centered"
-)
+st.set_page_config(page_title="Calculateur de spine", layout="centered")
+st.title("🎯 Calculateur de spine pour le tir à l'arc")
 
-st.title("🎯 Calculateur de Spine Dynamique pour Flèches en Bois")
+st.markdown("Remplissez les paramètres ci-dessous pour obtenir une recommandation de spine statique selon la norme ATA.")
 
-st.sidebar.header("Paramètres de l'arc et de l'archer")
-W_usine = st.sidebar.number_input("Poids d'armement à la longueur usine (lb)", 0.0, 100.0, 50.0, 1.0)
-L_archer = st.sidebar.number_input("Allonge de l'archer (inch)", 0.0, 36.0, 29.0, 0.5)
+# Champs avec valeurs par défaut
+draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, value=28.0, format="%f")
+draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0.0, value=40.0, format="%f")
+tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0.0, value=11.0, format="%f")
+string_type = st.selectbox("Type de corde", ["modern", "dacron", "non spécifié"], index=2)
+silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
+window_cut = st.number_input("Décalage de la fenêtre (center-cut) en mm", value=0.0, format="%f")
 
-st.sidebar.header("Paramètres additionnels")
-tip_weight_g = st.sidebar.number_input("Poids de la pointe (g)", 0.0, 100.0, 11.0, 1.0)
-string_type = st.sidebar.selectbox("Type de corde", ['none','modern','dacron'])
-silencer_type = st.sidebar.selectbox("Type de silencieux", ['none','light','heavy'])
-window_position_mm = st.sidebar.number_input("Position de la fenêtre (mm)", 0.0, 10.0, 2.0, 0.5)
+# Nettoyage des entrées texte
+string_val = string_type if string_type in ["modern", "dacron"] else None
+silencer_val = silencer_type if silencer_type in ["heavy", "light"] else None
 
-if st.sidebar.button("Calculer"):
-    s_type = None if string_type=='none' else string_type
-    sil_type = None if silencer_type=='none' else silencer_type
+# Affichage des valeurs saisies
+st.write("### Paramètres saisis :")
+st.write(f"- Allonge : {draw_length} pouces")
+st.write(f"- Puissance : {draw_weight} livres")
+st.write(f"- Poids de pointe : {tip_weight} g")
+st.write(f"- Type de corde : {string_val or 'non spécifié'}")
+st.write(f"- Silencieux : {silencer_val or 'non spécifié'}")
+st.write(f"- Décalage fenêtre : {window_cut} mm")
+
+# Calcul et affichage
+if draw_length > 0 and draw_weight > 0:
     result = spine_dynamique_requise(
-        W_usine=W_usine,
-        L_archer=L_archer,
-        tip_weight_g=tip_weight_g,
-        string_type=s_type,
-        silencer_type=sil_type,
-        window_position_mm=window_position_mm
+        W_usine=draw_weight,
+        L_archer=draw_length,
+        tip_weight_g=tip_weight,
+        string_type=string_val,
+        silencer_type=silencer_val,
+        window_position_mm=window_cut
     )
-    st.subheader("Résultats")
-    st.write(f"**Charge dynamique cible** : {result['D_dynamic_lb']:.1f} lb")
-    st.write(f"**Spine statique recommandée** : {result['spine_stat_ata']:.0f} millièmes de pouce")
-    st.markdown("**Offsets appliqués (lb)** :")
-    st.json(result['offsets'])
+
+    st.markdown("## 📊 Résultats")
+    st.success(f"**Spine statique recommandé (ATA)** : `{result['spine_stat_ata']} millièmes de pouce`")
+    st.info(f"**Charge dynamique estimée** : `{result['D_dynamic_lb']} lb`")
+
+    with st.expander("🔍 Détails des corrections appliquées"):
+        offsets = result['offsets']
+        st.write(f"- Correction pointe : {offsets['tip_offset_lb']} lb")
+        st.write(f"- Corde : {offsets['string_offset_lb']} lb")
+        st.write(f"- Silencieux : {offsets['silencer_offset_lb']} lb")
+        st.write(f"- Découpe latérale : {offsets['centercut_offset_lb']} lb")
+else:
+    st.warning("Veuillez saisir une allonge et une puissance supérieures à 0 pour lancer le calcul.")
