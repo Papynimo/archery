@@ -9,8 +9,18 @@ st.markdown("Remplissez les paramètres ci-dessous pour obtenir une recommandati
 # Champs avec ajustements de granularité
 draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, max_value=35.0, value=28.0, step=0.25, format="%.2f")
 draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0, max_value=100, value=40, step=1, format="%d")
-tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0, max_value=300, value=11, step=1, format="%d")
-string_type = st.selectbox("Type de corde", ["modern", "dacron", "non spécifié"], index=2)
+
+# Choix du poids de la pointe en grains (autour de 100gr par pas de 25)
+grains = st.selectbox("Poids de la pointe (en grains)", options=[50, 75, 100, 125, 150, 175, 200], index=2)
+tip_weight = round(grains / 15.4324)  # conversion en grammes pour calcul
+
+string_type = st.selectbox(
+    "Type de corde",
+    ["modern", "dacron", "non spécifié"],
+    index=2,
+    help="Ce champ dépend du matériau, pas de la forme. Par ex. :\n- Dacron = 'dacron'\n- Fast Flight, 8125, etc. = 'modern'\nNote : une corde flamande peut être 'modern' ou 'dacron' selon son matériau."
+)
+
 silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
 window_cut = st.number_input("Décalage de la fenêtre (center-cut) en mm", min_value=-10, max_value=20, value=0, step=1, format="%d")
 
@@ -22,7 +32,7 @@ silencer_val = silencer_type if silencer_type in ["heavy", "light"] else None
 st.write("### Paramètres saisis :")
 st.write(f"- Allonge : {draw_length:.2f} pouces")
 st.write(f"- Puissance : {draw_weight} livres")
-st.write(f"- Poids de pointe : {tip_weight} g")
+st.write(f"- Pointe : {grains} grains ≈ {tip_weight} g")
 st.write(f"- Type de corde : {string_val or 'non spécifié'}")
 st.write(f"- Silencieux : {silencer_val or 'non spécifié'}")
 st.write(f"- Décalage fenêtre : {window_cut} mm")
@@ -50,5 +60,3 @@ if draw_length > 0 and draw_weight > 0:
         st.write(f"- Découpe latérale : {offsets['centercut_offset_lb']} lb")
 else:
     st.warning("Veuillez saisir une allonge et une puissance supérieures à 0 pour lancer le calcul.")
-
-
