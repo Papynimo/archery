@@ -7,8 +7,8 @@ st.title("🎯 Calculateur de spine pour le tir à l'arc")
 st.markdown("Remplissez les paramètres ci-dessous pour obtenir une recommandation de spine statique selon la norme ATA.")
 
 # Champs avec valeurs par défaut
-draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, value=28.0, format="%f")
-draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0.0, value=40.0, format="%f")
+draw_length = st.number_input("Allonge (en pouces)", min_value=0.5, value=28.0, format="%f")
+draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=1.0, value=40.0, format="%f")
 tip_weight = st.number_input("Poids de la pointe (en grammes)", min_value=0.0, value=11.0, format="%f")
 string_type = st.selectbox("Type de corde", ["modern", "dacron", "non spécifié"], index=2)
 silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
