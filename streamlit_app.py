@@ -1,4 +1,4 @@
-mport streamlit as st
+import streamlit as st
 from spine_calculator import spine_dynamique_requise
 
 st.set_page_config(page_title="Calculateur de spine", layout="centered")
