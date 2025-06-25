@@ -3,12 +3,10 @@ from spine_calculator import spine_dynamique_requise
 from fpdf import FPDF
 import datetime
 import base64
-import os
 
-# Définir une classe PDF avec police Unicode
+# Classe PDF simplifiée sans set_font dans header
 class PDF(FPDF):
     def header(self):
-        self.set_font("DejaVu", size=12)
         self.cell(200, 10, "Rapport de Calcul de Spine - Tir à l'arc", ln=True, align='C')
         self.ln(10)
 
@@ -45,9 +43,9 @@ if draw_length > 0 and draw_weight > 0:
 
     if st.button("📄 Générer un rapport PDF"):
         pdf = PDF()
-        pdf.add_page()
         pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True)
         pdf.set_font("DejaVu", size=12)
+        pdf.add_page()
 
         date_str = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
         pdf.cell(200, 10, f"Date : {date_str}", ln=True)
@@ -78,4 +76,5 @@ if draw_length > 0 and draw_weight > 0:
             st.markdown(href, unsafe_allow_html=True)
 else:
     st.warning("Veuillez saisir une allonge et une puissance valides.")
+
 
