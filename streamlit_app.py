@@ -10,15 +10,31 @@ st.markdown("Remplissez les paramètres ci-dessous pour obtenir une recommandati
 draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, max_value=35.0, value=28.0, step=0.25, format="%.2f")
 draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0, max_value=100, value=40, step=1, format="%d")
 
-# Choix du poids de la pointe en grains (autour de 100gr par pas de 25)
+# Choix du poids de la pointe en grains
 grains = st.selectbox("Poids de la pointe (en grains)", options=[50, 75, 100, 125, 150, 175, 200], index=2)
 tip_weight = round(grains / 15.4324)  # conversion en grammes pour calcul
+
+# Diamètre de flèche
+diameter = st.selectbox(
+    "Diamètre de la flèche (en pouces)",
+    options=["5/16", "11/32", "non spécifié"],
+    index=2,
+    help="Le diamètre influence légèrement la rigidité réelle.\n- 5/16\" → plus souple\n- 11/32\" → plus rigide"
+)
+
+# Correction liée au diamètre
+if diameter == "5/16":
+    diameter_offset = -2
+elif diameter == "11/32":
+    diameter_offset = 2
+else:
+    diameter_offset = 0
 
 string_type = st.selectbox(
     "Type de corde",
     ["modern", "dacron", "non spécifié"],
     index=2,
-    help="Ce champ dépend du matériau, pas de la forme. Par ex. :\n- Dacron = 'dacron'\n- Fast Flight, 8125, etc. = 'modern'\nNote : une corde flamande peut être 'modern' ou 'dacron' selon son matériau."
+    help="Ce champ dépend du matériau, pas de la forme.\nPar ex. :\n- Dacron = 'dacron'\n- Fast Flight, 8125, etc. = 'modern'\nNote : une corde flamande peut être 'modern' ou 'dacron' selon son matériau."
 )
 
 silencer_type = st.selectbox("Type de silencieux", ["heavy", "light", "non spécifié"], index=2)
@@ -36,11 +52,12 @@ st.write(f"- Pointe : {grains} grains ≈ {tip_weight} g")
 st.write(f"- Type de corde : {string_val or 'non spécifié'}")
 st.write(f"- Silencieux : {silencer_val or 'non spécifié'}")
 st.write(f"- Décalage fenêtre : {window_cut} mm")
+st.write(f"- Diamètre flèche : {diameter}")
 
 # Calcul et affichage
 if draw_length > 0 and draw_weight > 0:
     result = spine_dynamique_requise(
-        W_usine=draw_weight,
+        W_usine=draw_weight + diameter_offset,
         L_archer=draw_length,
         tip_weight_g=tip_weight,
         string_type=string_val,
@@ -58,5 +75,6 @@ if draw_length > 0 and draw_weight > 0:
         st.write(f"- Corde : {offsets['string_offset_lb']} lb")
         st.write(f"- Silencieux : {offsets['silencer_offset_lb']} lb")
         st.write(f"- Découpe latérale : {offsets['centercut_offset_lb']} lb")
+        st.write(f"- Diamètre flèche : {diameter_offset} lb")
 else:
     st.warning("Veuillez saisir une allonge et une puissance supérieures à 0 pour lancer le calcul.")
