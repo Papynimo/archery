@@ -4,9 +4,10 @@ from fpdf import FPDF
 import datetime
 import base64
 
-# Classe PDF simplifiée sans set_font dans header
+# PDF sans police personnalisée
 class PDF(FPDF):
     def header(self):
+        self.set_font("Arial", size=12)
         self.cell(200, 10, "Rapport de Calcul de Spine - Tir à l'arc", ln=True, align='C')
         self.ln(10)
 
@@ -43,8 +44,7 @@ if draw_length > 0 and draw_weight > 0:
 
     if st.button("📄 Générer un rapport PDF"):
         pdf = PDF()
-        pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True)
-        pdf.set_font("DejaVu", size=12)
+        pdf.set_font("Arial", size=12)
         pdf.add_page()
 
         date_str = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
@@ -52,20 +52,20 @@ if draw_length > 0 and draw_weight > 0:
         pdf.cell(200, 8, f"Allonge : {draw_length} pouces", ln=True)
         pdf.cell(200, 8, f"Puissance : {draw_weight} lbs", ln=True)
         pdf.cell(200, 8, f"Pointe : {grains} grains (env. {tip_weight} g)", ln=True)
-        pdf.cell(200, 8, f"Type de corde : {string_val or 'non spécifié'}", ln=True)
-        pdf.cell(200, 8, f"Silencieux : {silencer_val or 'non spécifié'}", ln=True)
-        pdf.cell(200, 8, f"Décalage fenêtre : {window_cut} mm", ln=True)
-        pdf.cell(200, 8, f"Diamètre flèche : {diameter}", ln=True)
+        pdf.cell(200, 8, f"Type de corde : {string_val or 'non specifie'}", ln=True)
+        pdf.cell(200, 8, f"Silencieux : {silencer_val or 'non specifie'}", ln=True)
+        pdf.cell(200, 8, f"Decalage fenetre : {window_cut} mm", ln=True)
+        pdf.cell(200, 8, f"Diametre fleche : {diameter}", ln=True)
         pdf.ln(5)
-        pdf.cell(200, 8, f"Spine statique recommandé : {result['spine_stat_ata']} millièmes de pouce", ln=True)
-        pdf.cell(200, 8, f"Charge dynamique estimée : {result['D_dynamic_lb']} lb", ln=True)
+        pdf.cell(200, 8, f"Spine statique recommande : {result['spine_stat_ata']} millièmes de pouce", ln=True)
+        pdf.cell(200, 8, f"Charge dynamique estimee : {result['D_dynamic_lb']} lb", ln=True)
 
         offsets = result['offsets']
         pdf.ln(5)
-        pdf.cell(200, 10, "Corrections appliquées :", ln=True)
+        pdf.cell(200, 10, "Corrections appliquees :", ln=True)
         for k, v in offsets.items():
             pdf.cell(200, 8, f"{k.replace('_', ' ')} : {v} lb", ln=True)
-        pdf.cell(200, 8, f"Correction diamètre : {diameter_offset} lb", ln=True)
+        pdf.cell(200, 8, f"Correction diametre : {diameter_offset} lb", ln=True)
 
         pdf_path = "/tmp/rapport_spine.pdf"
         pdf.output(pdf_path)
@@ -76,5 +76,3 @@ if draw_length > 0 and draw_weight > 0:
             st.markdown(href, unsafe_allow_html=True)
 else:
     st.warning("Veuillez saisir une allonge et une puissance valides.")
-
-
