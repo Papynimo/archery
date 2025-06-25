@@ -14,8 +14,8 @@ class PDF(FPDF):
 st.set_page_config(page_title="Calculateur de spine", layout="centered")
 st.title("🎯 Calculateur de spine pour le tir à l'arc")
 
-draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, max_value=35.0, value=28.0, step=0.25, format="%.2f")
-draw_weight = st.number_input("Puissance à l'allonge (en livres)", min_value=0, max_value=100, value=40, step=1, format="%d")
+draw_length = st.number_input("Allonge (en pouces)", min_value=0.0, max_value=35.0, value=29.0, step=0.25, format="%.2f")
+draw_weight = st.number_input("Puissance de l'arc (en livres)", min_value=0, max_value=100, value=38, step=1, format="%d")
 grains = st.selectbox("Poids de la pointe (en grains)", options=[50, 75, 100, 125, 150, 175, 200], index=2)
 tip_weight = round(grains / 15.4324)
 
